@@ -1,18 +1,15 @@
-# menu to dict
+from code.exceptions import MealTooBigError, MealOutOfTheMenu
+from data.food_read import meals_dict, combos_dict
 
-def menu_to_dict(menu_type):
-    try: 
-        menu_dict = eval(menu_type + '_dict') #check if the dict already exist 
-    except NameError:
-        menu_dict = {
-        item ["name"]: item
-        for item in eval(menu_type)
-        }  
-    return(menu_dict)
-    
-    
+def id_to_name(*id_list):
+    ids = id_list.copy()
+    for i in range(len(ids)):
+        for j in meals_dict:
+            if ids[i] == meals_dict[j]['id']:
+                ids[i] = meals_dict[j]['name']
+    return(ids)
+
 # general
-
 def find_menu_type(item):
     if item in meals_dict:
         return('meals')
@@ -21,8 +18,7 @@ def find_menu_type(item):
     else:
         raise KeyError
 
-# calories
-
+# calories non-recurcive
 def calories_counter_meals(*order):
     calories_count = 0
     for item in order:
@@ -35,51 +31,59 @@ def calories_counter_meals(*order):
 def calories_counter_combos(*order):
     calories_count = 0
     for item in order:
-        # print('combo: ', item)
         meals_in_combo = combos_dict[item]['meals']
         for i in range(len(meals_in_combo)):
             for j in meals_dict:
                 if meals_in_combo[i] == meals_dict[j]['id']:
                     meals_in_combo[i] = meals_dict[j]['name']
                     break
-        # print(f'meals_in_combo: {meals_in_combo}')
         combo_calories_count = calories_counter_meals(*meals_in_combo)
         calories_count += combo_calories_count
         print(f'{item} combo calories count: {combo_calories_count}\n')
-        # print(f'current calories count: {calories_count}')
     return(calories_count)
 
 def calories_counter_order(*order):
-    meals_dict = menu_to_dict('meals')
-    combos_dict = menu_to_dict('combos')
     calories_count = 0
     for item in order:
         print(f'item: {item}')
         try:
             menu_type = find_menu_type(item)
-            # print(f'menu_type: {menu_type}')
             calories_count += eval('calories_counter_' + menu_type + '(item)')
-            # print(f'current calories count: {calories_count}\n')
         except KeyError:
             print(f'{item} is not on the menu\n')
+        if calories_count > 2000:
+            raise MealTooBigError(calories_count)
     return(calories_count)
 
-
-# price
-
-def price_counter(*order):
-    meals_dict = menu_to_dict('meals')
-    combos_dict = menu_to_dict('combos')
-    price_count = 0
-        for item in order:
+# calories recurcive
+def calories_counter(*order):
+    calories_count = 0
+    for item in order:
+        # print(f'item: {item}')
         try:
             menu_type = find_menu_type(item)
-            # print(f'menu_type: {menu_type}')
+            if menu_type == 'meals':
+                calories_count += meals_dict[item]['calories']
+            elif menu_type == 'combos':
+                calories_count += calories_counter(id_to_name(*meals_dict[item]['calories']))
+        except KeyError:
+            raise MealOutOfTheMenu(meal)
+        if calories_count > 2000:
+            raise MealTooBigError(calories_count)
+    return(calories_count)
+
+# price
+def price_counter(*order):
+    price_count = 0
+    for item in order:
+        try:
+            menu_type = find_menu_type(item)
             price_count_current = eval(menu_type + '_dict' + "[item]['price']")
             price_count += price_count_current
-            print(f'{item} price count: {price_count_current}')
+            # print(f'{item} price count: {price_count_current}')
         except KeyError:
-            print(f'{item} is not on the menu')
+            # print(f'{item} is not on the menu')
+            pass
     return(price_count)
 
 
