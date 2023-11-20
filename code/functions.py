@@ -25,7 +25,6 @@ def find_menu_type(item):
 def calories_counter_meals(*order):
     calories_count = 0
     for item in order:
-        # print(f'meal: {item}')
         meal_calories_count = MEALS_DICT[item]['calories']
         calories_count += meal_calories_count
         print(f'{item} meal calories count: {meal_calories_count}')
@@ -66,7 +65,6 @@ def calories_counter(*order):
     calories_count = 0
     for item in order:
         item = str(item).lower()
-        # print(f'item: {item}')
         try:
             menu_type = find_menu_type(item)
             if menu_type == 'meals':
@@ -88,9 +86,9 @@ def price_counter(*order):
         item = str(item).lower()
         try:
             menu_type = find_menu_type(item)
-            price_count_current = eval((menu_type + '_dict').upper() + "[item]['price']")
+            price_count_current = eval(
+                (menu_type + '_dict').upper() + "[item]['price']")
             price_count += price_count_current
-            # print(f'{item} price count: {price_count_current}')
         except KeyError:
             raise MealOutOfTheMenu(item)
     return price_count
