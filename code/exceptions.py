@@ -3,7 +3,8 @@
 # the exception for calories limit
 class MealTooBigError(Exception):
     def __init__(self, calories):
-        self.message = f'Too many calories! {calories} exceeds the limit of of 2000.'
+        self.message = f'Too many calories! \
+        {calories} exceeds the limit of of 2000.'
         super().__init__(self.message)
 
 
