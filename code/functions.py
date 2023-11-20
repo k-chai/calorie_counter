@@ -92,6 +92,3 @@ def price_counter(*order):
         except KeyError:
             raise MealOutOfTheMenu(item)
     return price_count
-
-
-
