@@ -27,45 +27,6 @@ def find_menu_type(item):
         raise KeyError
 
 
-# calories non-recurcive
-def calories_counter_meals(*order):
-    calories_count = 0
-    for item in order:
-        meal_calories_count = MEALS_DICT[item]['calories']
-        calories_count += meal_calories_count
-        print(f'{item} meal calories count: {meal_calories_count}')
-    return calories_count
-
-
-def calories_counter_combos(*order):
-    calories_count = 0
-    for item in order:
-        meals_in_combo = COMBOS_DICT[item]['meals']
-        for i in range(len(meals_in_combo)):
-            for j in MEALS_DICT:
-                if meals_in_combo[i] == MEALS_DICT[j]['id']:
-                    meals_in_combo[i] = MEALS_DICT[j]['name']
-                    break
-        combo_calories_count = calories_counter_meals(*meals_in_combo)
-        calories_count += combo_calories_count
-        print(f'{item} combo calories count: {combo_calories_count}\n')
-    return calories_count
-
-
-def calories_counter_order(*order):
-    calories_count = 0
-    for item in order:
-        print(f'item: {item}')
-        try:
-            menu_type = find_menu_type(item)
-            calories_count += eval('calories_counter_' + menu_type + '(item)')
-        except KeyError:
-            print(f'{item} is not on the menu\n')
-        if calories_count > 2000:
-            raise MealTooBigError(calories_count)
-    return calories_count
-
-
 # calories recurcive
 def calories_counter(*order):
     calories_count = 0
