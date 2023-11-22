@@ -3,7 +3,7 @@ import json
 
 def menu_to_dict(menu):
     menu_dict = {
-        item['name']: item
+        item['id']: item
         for item in menu
     }
     return menu_dict
