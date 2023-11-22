@@ -2,12 +2,18 @@ from code.exceptions import MealTooBigError, MealOutOfTheMenu
 from code.constants import MEALS_DICT, COMBOS_DICT
 
 
-def id_to_name(*id_list):
+def name_to_id(*id_list):
     ids = list(id_list).copy()
     for i in range(len(ids)):
+        item = str(ids[i]).lower()
         for j in MEALS_DICT:
-            if ids[i] == MEALS_DICT[j]['id']:
-                ids[i] = MEALS_DICT[j]['name']
+            if item == MEALS_DICT[j]['name']:
+                ids[i] = MEALS_DICT[j]['id']
+                continue
+        for j in COMBOS_DICT:
+            if item == COMBOS_DICT[j]['name']:
+                ids[i] = COMBOS_DICT[j]['id']
+                continue
     return ids
 
 
@@ -63,15 +69,15 @@ def calories_counter_order(*order):
 # calories recurcive
 def calories_counter(*order):
     calories_count = 0
-    for item in order:
-        item = str(item).lower()
+    order_modified = name_to_id(*order)
+    for item in order_modified:
         try:
             menu_type = find_menu_type(item)
             if menu_type == 'meals':
                 calories_count += MEALS_DICT[item]['calories']
             elif menu_type == 'combos':
                 calories_count += calories_counter(
-                    *id_to_name(*COMBOS_DICT[item]['meals']))
+                    *COMBOS_DICT[item]['meals'])
         except KeyError:
             raise MealOutOfTheMenu(item)
         if calories_count > 2000:
@@ -81,9 +87,9 @@ def calories_counter(*order):
 
 # price
 def price_counter(*order):
+    order_modified = name_to_id(*order)
     price_count = 0
-    for item in order:
-        item = str(item).lower()
+    for item in order_modified:
         try:
             menu_type = find_menu_type(item)
             price_count_current = eval(
