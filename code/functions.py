@@ -80,8 +80,8 @@ def calories_counter(*order):
                     *COMBOS_DICT[item]['meals'])
         except KeyError:
             raise MealOutOfTheMenu(item)
-        if calories_count > 2000:
-            raise MealTooBigError(calories_count)
+    if calories_count > 2000:
+        raise MealTooBigError(calories_count)
     return calories_count
 
 
